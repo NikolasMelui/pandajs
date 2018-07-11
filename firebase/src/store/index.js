@@ -7,21 +7,35 @@ Vue.use(Vuex);
 
 const store = () =>
 	new Vuex.Store({
-		state: {},
-		mutations: {},
+		state: {
+			notification: null,
+		},
+		mutations: {
+			setNotification(state, payload) {
+				state.notification = payload;
+			},
+		},
 		actions: {
 			send({ commit }, data) {
 				firebase
 					.auth()
 					.createUserWithEmailAndPassword(data.email, data.password)
 					.then(userkey => {
+						commit('setNotification', { status: 'success', message: 'Registration success' });
 						console.log(userkey);
 					})
-					.catch(err => console.log(err));
+					.catch(err => {
+						commit('setNotification', { status: 'error', message: err.message });
+						console.log(err);
+					});
 				console.log(data);
 			},
 		},
-		getters: {},
+		getters: {
+			getNotification(state) {
+				return state.notification;
+			},
+		},
 	});
 
 export default store;
