@@ -19,21 +19,21 @@ const createNewUser = async (email, password) => {
 			await firebase
 				.firestore()
 				.collection('users')
-				.add(newUser)
-				.then(() => {
-					response.push({
-						status: 200,
-						message: 'The user was successfully added',
-					});
-					console.log('The user was added to db');
-				})
-				.catch(err => {
-					console.log(`Error:\nstatus: ${err.status}\nmessage: ${err.message}`);
-					response.push({
-						status: err.status,
-						message: err.message,
-					});
-				});
+				.add(newUser);
+		})
+		.then(() => {
+			response.push({
+				status: 200,
+				message: 'The user was successfully added',
+			});
+			console.log('The user was added to db');
+		})
+		.catch(err => {
+			console.log(`Error:\nstatus: ${err.status}\nmessage: ${err.message}`);
+			response.push({
+				status: err.status,
+				message: err.message,
+			});
 		});
 	return response;
 };
