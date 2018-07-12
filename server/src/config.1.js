@@ -1,4 +1,5 @@
-export default {
+module.exports = {
+	port: 3001,
 	firebase: {
 		apiKey: '',
 		authDomain: '',
