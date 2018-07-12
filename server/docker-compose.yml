@@ -1,0 +1,12 @@
+version: "3"
+services:
+  micro:
+    build: ./
+    ports:
+      - 3333:3000
+    restart: unless-stopped
+    volumes:
+      - ./volume:/var/www
+volumes:
+  volume:
+    driver: local
