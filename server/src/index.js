@@ -1,17 +1,49 @@
-import http from 'http';
+const { send, json } = require('micro');
+const { router, get, post } = require('microrouter');
+const cors = require('micro-cors')();
+const firebase = require('firebase');
+const config = require('./config.js');
 
-const server = http.createServer((req, res) => res.end('Welcome to multikey-node-boilerplate!'));
+firebase.initializeApp(config.firebase);
 
-server.listen(3000, () => global.console.log(`Server is listening on port 3000`));
-
-import http from 'http';
-
-const config = {
-	port: 3000,
+const createNewUser = async (email, password) => {
+	const response = [];
+	await firebase
+		.auth()
+		.createUserWithEmailAndPassword(email, password)
+		.then(async userKey => {
+			const newUser = {
+				id: userKey.user.uid,
+				email: userKey.user.email,
+			};
+			await firebase
+				.firestore()
+				.collection('users')
+				.add(newUser)
+				.then(() => {
+					response.push({
+						status: 200,
+						message: 'The user was successfully added',
+					});
+					console.log('The user was added to db');
+				})
+				.catch(err => {
+					console.log(`Error:\nstatus: ${err.status}\nmessage: ${err.message}`);
+					response.push({
+						status: err.status,
+						message: err.message,
+					});
+				});
+		});
+	return response;
 };
 
-http.createServer((req, res) => {
-	global.console.log();
-	res.writeHead(200, 'OK', { 'Content-Type': 'text/plain' });
-	res.end(`Hello from port: ${config.port} and welcome to multikey-node-boilerplate!`);
-}).listen(config.port, () => global.console.log(`Server is listening on port ${config.port}`));
+const createNewUserHandler = async (req, res) => {
+	const curReq = await json(req);
+	return send(res, 200, await createNewUser(curReq.email, curReq.password));
+};
+
+module.exports = router(
+	post('/createnewuser', cors(createNewUserHandler)),
+	async (req, res) => await send(await res, 404, 'Wrong request.')
+);
