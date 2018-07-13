@@ -1,5 +1,5 @@
 const { send, json } = require('micro');
-const { router, get, post } = require('microrouter');
+const { router, post } = require('microrouter');
 const cors = require('micro-cors')();
 const firebase = require('firebase');
 const config = require('./config.js');
@@ -29,9 +29,9 @@ const createNewUser = async (email, password) => {
 			console.log('The user was added to db');
 		})
 		.catch(err => {
-			console.log(`Error:\nstatus: ${err.status}\nmessage: ${err.message}`);
+			console.log(`Error:\ncode: ${err.code}\nmessage: ${err.message}`);
 			response.push({
-				status: err.status,
+				status: err.code,
 				message: err.message,
 			});
 		});
