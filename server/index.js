@@ -38,5 +38,5 @@ const createNewUserHandler = async (req, res) => {
 
 module.exports = router(
 	post('/createnewuser', cors(createNewUserHandler)),
-	async (req, res) => await send(res, 200, 'Hello, Panda.')
+	async (req, res) => await send(res, 200, 'Hello, Panda!')
 );
